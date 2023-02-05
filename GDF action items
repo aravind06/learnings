@@ -1,0 +1,89 @@
+GDF action items:
+
+Pulling specific version:
+
+	GET https://dialogflow.googleapis.com/v3/{parent=projects/*/locations/*/agents/*/flows/*}/versions/{version_id}
+
+	https://dialogflow.googleapis.com/v2beta1/{parent=projects/*/locations/*/agents/*/flows/*}/versions/{version}
+
+
+version:
+
+OkHttpClient client = new OkHttpClient();
+
+String apiKey = "your_api_key";
+String versionId = "version_id_you_want_to_retrieve";
+String parent = "projects/your_project_id/locations/your_location_id/agents/your_agent_id/flows/your_flow_id";
+String url = "https://dialogflow.googleapis.com/v3/" + parent + "/versions/" + versionId + "?key=" + apiKey;
+
+Request request = new Request.Builder()
+    .url(url)
+    .get()
+    .build();
+
+Response response = client.newCall(request).execute();
+if (response.isSuccessful()) {
+    // parse the response as needed
+}
+
+
+Environment:
+
+GET https://dialogflow.googleapis.com/v3/{parent=projects/*/locations/*/agents/*/environments/*}
+
+
+OkHttpClient client = new OkHttpClient();
+
+String apiKey = "your_api_key";
+String parent = "projects/your_project_id/locations/your_location_id/agents/your_agent_id/environments/your_environment_id";
+String url = "https://dialogflow.googleapis.com/v3/" + parent + "?key=" + apiKey;
+
+Request request = new Request.Builder()
+    .url(url)
+    .get()
+    .build();
+
+Response response = client.newCall(request).execute();
+if (response.isSuccessful()) {
+    // parse the response as needed
+}
+
+
+Sample:
+
+{
+  "pages": [
+    {
+      "name": "projects/<PROJECT_ID>/locations/<LOCATION_ID>/agents/<AGENT_ID>/flows/<FLOW_ID>/versions/<VERSION_ID>/pages/<PAGE_ID>",
+      "displayName": "<PAGE_DISPLAY_NAME>",
+      "transitionRouteGroups": [
+        {
+          "name": "projects/<PROJECT_ID>/locations/<LOCATION_ID>/agents/<AGENT_ID>/flows/<FLOW_ID>/versions/<VERSION_ID>/pages/<PAGE_ID>/transitionRouteGroups/<ROUTE_GROUP_ID>",
+          "transitionRoutes": [
+            {
+              "name": "projects/<PROJECT_ID>/locations/<LOCATION_ID>/agents/<AGENT_ID>/flows/<FLOW_ID>/versions/<VERSION_ID>/pages/<PAGE_ID>/transitionRouteGroups/<ROUTE_GROUP_ID>/transitionRoutes/<ROUTE_ID>",
+              "targetPage": "<TARGET_PAGE_ID>"
+            }
+          ]
+        }
+      ],
+      "entryFulfillment": {
+        "conditions": [
+          {
+            "type": "<TYPE>",
+            "expression": "<EXPRESSION>"
+          }
+        ],
+        "messages": [
+          {
+            "text": {
+              "text": [
+                "<MESSAGE_TEXT>"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

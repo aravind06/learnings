@@ -1,0 +1,70 @@
+Requirement 1:
+    compare two braches if they are in sync like two different release branches
+
+Approach:
+    step 1: get the list of commits
+    step 2: set these to java pojo list
+    step 3: compare the two list and check for difference
+
+
+Sample commit structure:
+  
+  API url:
+
+      https://gitlab.com/api/v4/projects/{project_id}/repository/commits?ref_name={branch_name}
+
+    For example, if your project ID is 123 and you want to retrieve commits for the master branch, the URL would be:
+      
+        https://gitlab.com/api/v4/projects/123/repository/commits?ref_name=master
+
+
+response structure:
+
+[
+  {
+    "id": "e2c8b9841a0c21a88d724079c837f7b3c3a3ba08",
+    "message": "Update README.md",
+    "author_name": "John Doe",
+    "author_email": "johndoe@example.com",
+    "created_at": "2022-12-01T12:00:00.000Z"
+  },
+  {
+    "id": "5f6b48f6dc8b5c5e9aac0c38fc1d8b75f7d3a3e1",
+    "message": "Fix typo in README.md",
+    "author_name": "Jane Doe",
+    "author_email": "janedoe@example.com",
+    "created_at": "2022-11-30T12:00:00.000Z"
+  },
+  ...
+]
+
+
+
+
+Sample git api call:
+
+OkHttpClient client = new OkHttpClient();
+
+Request request = new Request.Builder()
+  .url("https://gitlab.com/api/v4/projects/<project_id>/repository/branches/<branch1>")
+  .get()
+  .build();
+
+Response response = client.newCall(request).execute();
+
+String branch1Commit = response.body().string();
+
+request = new Request.Builder()
+  .url("https://gitlab.com/api/v4/projects/<project_id>/repository/branches/<branch2>")
+  .get()
+  .build();
+
+response = client.newCall(request).execute();
+
+String branch2Commit = response.body().string();
+
+if (branch1Commit.equals(branch2Commit)) {
+  System.out.println("Branches are in sync.");
+} else {
+  System.out.println("Branches are not in sync.");
+}

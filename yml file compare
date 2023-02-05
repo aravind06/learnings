@@ -1,0 +1,132 @@
+Requirement 1: comparing yml files
+	-> we have to go through different git repo's and based on their structure find the yml locations
+	-> load them and compare them for missing keys between dev, QA, PROD
+	-> report it
+
+Approach:
+	
+You can achieve this by converting the YAML files into Java objects, comparing the objects to find differences, and then reporting any discrepancies in the keys. Here's a high-level outline of the steps you would take:
+
+STEP 1: Load the YAML files into Java objects: You can use a library such as SnakeYAML to parse the YAML files and convert them into Java objects, such as maps or POJOs.
+
+STEP 2: Compare the objects: Once you have the Java objects, you can compare them to find any differences in the keys. You can do this by iterating over the key sets of both objects and checking if they are the same.
+
+STEP 3: Report any discrepancies: If you find any differences in the key sets, you can report these discrepancies. This could be done by logging the differences, or by returning a list of differences that can be displayed to the user.
+
+Sample:
+
+loading files:
+
+import org.yaml.snakeyaml.Yaml;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Map;
+
+public class YamlParser {
+    public static void main(String[] args) throws FileNotFoundException {
+        Yaml yaml = new Yaml();
+        FileInputStream fileInputStream1 = new FileInputStream("file1.yml");
+        FileInputStream fileInputStream2 = new FileInputStream("file2.yml");
+        Map<String, Object> file1 = yaml.load(fileInputStream1);
+        Map<String, Object> file2 = yaml.load(fileInputStream2);
+        System.out.println("File 1: " + file1);
+        System.out.println("File 2: " + file2);
+    }
+}
+
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class KeySetComparer {
+    public static void main(String[] args) {
+        Map<String, Object> file1 = ...; // Load first YAML file into a map
+        Map<String, Object> file2 = ...; // Load second YAML file into a map
+
+        Set<String> file1Keys = file1.keySet();
+        Set<String> file2Keys = file2.keySet();
+
+        // Find keys in file1 that are not in file2
+        Set<String> missingKeys = file1Keys.stream()
+                .filter(key -> !file2Keys.contains(key))
+                .collect(Collectors.toSet());
+
+        // Find keys in file2 that are not in file1
+        Set<String> extraKeys = file2Keys.stream()
+                .filter(key -> !file1Keys.contains(key))
+                .collect(Collectors.toSet());
+
+        // Report any differences
+        if (!missingKeys.isEmpty() || !extraKeys.isEmpty()) {
+            System.out.println("Key differences found:");
+            if (!missingKeys.isEmpty()) {
+                System.out.println("Missing keys in file2: " + missingKeys);
+            }
+            if (!extraKeys.isEmpty()) {
+                System.out.println("Extra keys in file2: " + extraKeys);
+            }
+        } else {
+            System.out.println("No key differences found");
+        }
+    }
+}
+
+
+UI representation:
+
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Typography from '@material-ui/core/Typography';
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
+    marginTop: theme.spacing(3),
+  },
+  listSection: {
+    backgroundColor: 'inherit',
+  },
+  ul: {
+    backgroundColor: 'inherit',
+    padding: 0,
+  },
+}));
+
+const KeySetDifference = ({ missingKeys, extraKeys }) => {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.root}>
+      {!missingKeys.isEmpty() && (
+        <List className={classes.listSection}>
+          <Typography variant="h6">Missing Keys:</Typography>
+          {missingKeys.map(key => (
+            <ListItem key={key}>
+              <ListItemText primary={key} />
+            </ListItem>
+          ))}
+        </List>
+      )}
+      {!extraKeys.isEmpty() && (
+        <List className={classes.listSection}>
+          <Typography variant="h6">Extra Keys:</Typography>
+          {extraKeys.map(key => (
+            <ListItem key={key}>
+              <ListItemText primary={key} />
+            </ListItem>
+          ))}
+        </List>
+      )}
+      {missingKeys.isEmpty() && extraKeys.isEmpty() && (
+        <Typography variant="h6">No key differences found</Typography>
+      )}
+    </div>
+  );
+};
+
+export default KeySetDifference;
