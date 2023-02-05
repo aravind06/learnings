@@ -41,7 +41,7 @@ response structure:
 
 
 
-Sample git api call:
+Sample git lab api call:
 
 OkHttpClient client = new OkHttpClient();
 
@@ -68,3 +68,36 @@ if (branch1Commit.equals(branch2Commit)) {
 } else {
   System.out.println("Branches are not in sync.");
 }
+
+sample github api call:
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import java.io.IOException;
+
+public class GithubCommitFetcher {
+    private static final String API_URL = "https://api.github.com/repos/<OWNER>/<REPO>/commits?sha=<BRANCH_NAME>";
+    private static final OkHttpClient client = new OkHttpClient();
+
+    public static void main(String[] args) throws IOException {
+        Request request = new Request.Builder()
+            .url(API_URL)
+            .get()
+            .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                System.out.println("Failed to get response from Github API");
+                return;
+            }
+            String responseBody = response.body().string();
+            System.out.println(responseBody);
+        }
+    }
+}
+
+
+GIT implementation:
+https://github.com/AmarPragramming/MyAquariumDashboard
